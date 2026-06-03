@@ -54,3 +54,17 @@ class Recipe:
     def __str__(self):
         ingredients_sup = "\n".join(str(ingredient) for ingredient in self.ingredients)
         return f"{self.title} состоит из ингредиентов: \n{ingredients_sup}"
+
+# Ваш код здесь
+class DietaryRecipe(Recipe):
+    def __init__(self, title, diet_type, ingredients):
+        super().__init__(title, ingredients)
+        self.diet_type = diet_type
+    
+    def scale(self, ratio):
+        new_recipe = super().scale(ratio)
+        return DietaryRecipe(new_recipe.title, self.diet_type, new_recipe.ingredients)
+    
+    def __str__(self):
+        old_str = super().__str__()
+        return f"[{self.diet_type}] {old_str}"
