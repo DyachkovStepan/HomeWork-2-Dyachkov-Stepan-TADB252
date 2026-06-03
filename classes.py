@@ -68,3 +68,43 @@ class DietaryRecipe(Recipe):
     def __str__(self):
         old_str = super().__str__()
         return f"[{self.diet_type}] {old_str}"
+
+# Ваш код здесь
+class ShoppingList:
+    def __init__(self):
+        self._items = []
+
+    def add_recipe(self, recipe, portions):
+        if portions <= 0:
+            raise ValueError("Количество порций должно быть положительным")
+        recipe = recipe.scale(portions)
+        for ingredient in recipe.ingredients:
+            self._items.append((ingredient, recipe.title))
+    
+    def remove_recipe(self, title):
+        new_items = []
+        for kortezh in self._items:
+            if kortezh[1] != title:
+                new_items.append(kortezh)
+        self._items = new_items
+    
+    def get_list(self):
+        ingredients = {}
+        for kortezh in self._items:
+            ingredient = kortezh[0]
+            ingr_name, ingr_quantity, ingr_unit = ingredient.name,ingredient.quantity,ingredient.unit
+            if (f"{ingr_name},{ingr_unit}") in ingredients:
+                ingredients[f"{ingr_name},{ingr_unit}"] += ingr_quantity
+            else:
+                ingredients[f"{ingr_name},{ingr_unit}"] = ingr_quantity
+
+        ans = []
+        for key,value in ingredients.items():
+            ingr_name, ingr_unit = key.split(",")
+            ans.append(Ingredient(ingr_name,value,ingr_unit))
+        return sorted(ans, key  = lambda x: x.name) #https://pythonru.com/osnovy/vse-chto-nuzhno-znat-o-lambda-funkcijah-v-python - О lambda-функции
+    
+    def __add__(self, other):
+        combined = ShoppingList()
+        combined._items = self._items + other._items
+        return combined
